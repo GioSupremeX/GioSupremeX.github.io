@@ -34,8 +34,8 @@ We do NOT collect payment information directly (payments are handled by third-pa
 ## 7. Minors
 - The Bot is not intended for users under 13.
 
-## 9. Changes to this Policy
+## 8. Changes to this Policy
 - We may update the Privacy Policy. The "Last updated" date will change; significant changes will be communicated where feasible.
 
-## 10. Contact
+## 9. Contact
 For questions or support: Join our discord server https://discord.gg/gmn7rqgvSE
