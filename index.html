@@ -1,1 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Privacy & Terms — GioSupremeX Bot</title>
+  <meta name="description" content="Privacy Policy and Terms of Service for the GioSupremeX bot." />
+  <style>
+    :root{
+      --bg:#0b1220; --card:#0f1724; --muted:#9aa6b2; --accent:#58a6ff; --text:#e6eef8;
+      --radius:12px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    html,body{height:100%; margin:0; background:linear-gradient(180deg,#051021 0%, #071426 100%); color:var(--text);}
+    .wrap{max-width:980px; margin:44px auto; padding:28px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:var(--radius); box-shadow:0 6px 30px rgba(2,6,23,0.6);}
+    header{display:flex;align-items:center;justify-content:space-between;gap:16px; margin-bottom:18px;}
+    h1{font-size:20px;margin:0;}
+    p.lead{margin:4px 0 0; color:var(--muted); font-size:13px;}
+    .nav{display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;}
+    .tab{background:transparent;border:1px solid rgba(255,255,255,0.06); color:var(--text); padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:600;}
+    .tab.active{background:linear-gradient(90deg, rgba(88,166,255,0.12), rgba(88,166,255,0.06)); border-color:rgba(88,166,255,0.18); color:var(--accent);}
+    .card{background:var(--card); padding:20px; border-radius:10px; box-shadow:inset 0 1px 0 rgba(255,255,255,0.02);}
+    #content{color:var(--text);}
+    /* Markdown content styles */
+    #content h1,#content h2,#content h3{color:var(--text); margin-top:1.25em;}
+    #content p{color: #cfe6ff; line-height:1.65;}
+    #content a{color:var(--accent); text-decoration:underline;}
+    pre, code{background:rgba(255,255,255,0.03); padding:6px 8px; border-radius:6px; color:#dbeafe; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; font-size:13px;}
+    footer{margin-top:18px; display:flex; justify-content:space-between; align-items:center; gap:12px; color:var(--muted); font-size:13px;}
+    .smalllink{color:var(--muted); text-decoration:none;}
+    .error{color:#ffb4b4; padding:12px; border-radius:8px; background:rgba(255,76,76,0.06);}
+    @media (max-width:600px){ .wrap{margin:20px 14px; padding:16px;} header{flex-direction:column;align-items:flex-start} }
+  </style>
+</head>
+<body>
+  <main class="wrap" role="main" aria-live="polite">
+    <header>
+      <div>
+        <h1>GioSupremeX — Bot Policies</h1>
+        <p class="lead">Privacy Policy and Terms of Service for the bot. These are the official policy documents.</p>
+      </div>
+      <div style="text-align:right;">
+        <a class="smalllink" href="https://github.com/GioSupremeX/GioSupremeX.github.io" target="_blank" rel="noopener">View repo on GitHub</a>
+      </div>
+    </header>
 
+    <nav class="nav" aria-label="Policy navigation">
+      <button id="btn-privacy" class="tab" data-file="PRIVACY.md">Privacy Policy</button>
+      <button id="btn-terms" class="tab" data-file="TERMS.md">Terms of Service</button>
+    </nav>
+
+    <section class="card" id="viewer" aria-live="polite">
+      <div id="content">Loading policies…</div>
+    </section>
+
+    <footer>
+      <div>Published by GioSupremeX • <span id="updated"></span></div>
+      <div><a class="smalllink" href="mailto:contact@users.noreply.github.com">Contact</a></div>
+    </footer>
+  </main>
+
+  <!-- marked (Markdown -> HTML) and DOMPurify (sanitize) from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js"></script>
+  <script>
+    // Safe markdown rendering
+    marked.setOptions({
+      headerIds: true,
+      mangle: false
+    });
+
+    const contentEl = document.getElementById('content');
+    const updatedEl = document.getElementById('updated');
+    const tabs = document.querySelectorAll('.tab');
+
+    async function fetchAndRender(path){
+      try {
+        contentEl.innerHTML = '<em>Loading…</em>';
+        const res = await fetch(path, { cache: "no-store" });
+        if (!res.ok) {
+          contentEl.innerHTML = '<div class="error">Could not load the document: ' + res.status + ' ' + res.statusText + '</div>';
+          return;
+        }
+        const md = await res.text();
+        const html = marked.parse(md);
+        contentEl.innerHTML = DOMPurify.sanitize(html);
+        // update "last updated" using response headers if available
+        const lastMod = res.headers.get('last-modified');
+        updatedEl.textContent = lastMod ? new Date(lastMod).toLocaleString() : new Date().toLocaleDateString();
+      } catch (err) {
+        contentEl.innerHTML = '<div class="error">Error loading document. Check that PRIVACY.md and TERMS.md are present in the repository root.</div>';
+        console.error(err);
+      }
+    }
+
+    function setActive(tabBtn){
+      tabs.forEach(t => t.classList.remove('active'));
+      tabBtn.classList.add('active');
+    }
+
+    // wire buttons
+    document.getElementById('btn-privacy').addEventListener('click', (e) => {
+      setActive(e.currentTarget);
+      history.replaceState(null, '', '#privacy');
+      fetchAndRender(e.currentTarget.dataset.file);
+    });
+
+    document.getElementById('btn-terms').addEventListener('click', (e) => {
+      setActive(e.currentTarget);
+      history.replaceState(null, '', '#terms');
+      fetchAndRender(e.currentTarget.dataset.file);
+    });
+
+    // initial load: default to Privacy, but respect hash
+    (function init(){
+      const hash = location.hash.replace('#','');
+      if (hash === 'terms') {
+        document.getElementById('btn-terms').click();
+      } else {
+        document.getElementById('btn-privacy').click();
+      }
+    })();
+  </script>
+</body>
+</html>
