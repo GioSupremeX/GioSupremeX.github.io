@@ -31,6 +31,13 @@ These Terms apply to your use of the Bot and any related services, commands, or 
 ## 8. Termination
 - We reserve the right to restrict or terminate access to the Bot at any time for any reason.
 
+## 8. Dangerous Commands
+- This Discord bot may contain commands that can be considered dangerous, destructive, or capable of significantly altering server data, including but not limited to deleting content, modifying server structures,     or affecting members.
+
+  Such commands are restricted to users with elevated permissions within Discord. By using this bot, you acknowledge and agree that the bot owner, developer, and associated parties are not responsible or liable for   any damage, data loss, misuse, or other consequences resulting from the execution of these commands.
+
+  All actions performed using the bot are the sole responsibility of the user executing the command and the server administration that granted the required permissions.
+
 ## 9. Changes to Terms
 - We may modify these Terms at any time. We will post the updated Terms here and update the "Last updated" date. Continued use after changes means you accept the new Terms.
 
